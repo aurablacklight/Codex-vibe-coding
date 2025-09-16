@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="A sophisticated modern glass-like frontend UI showcase website built for Cloudflare Workers. Experience cutting-edge glassmorphism effects and responsive design.">
+    <meta name="keywords" content="glassmorphism, UI showcase, modern web design, Cloudflare Workers, glass effects, responsive design">
+    <meta property="og:title" content="Codex Vibe - Glass UI Showcase">
+    <meta property="og:description" content="Experience the future of web design with sophisticated glassmorphism effects and cutting-edge UI components.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Vibe - Glass UI Showcase</title>
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--primary-color:#6366f1;--secondary-color:#8b5cf6;--accent-color:#06b6d4;--success-color:#10b981;--warning-color:#f59e0b;--danger-color:#ef4444;--glass-bg:rgba(255,255,255,0.1);--glass-border:rgba(255,255,255,0.2);--glass-shadow:0 8px 32px rgba(0,0,0,0.1);--glass-blur:blur(10px);--font-primary:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--space-xs:0.5rem;--space-sm:1rem;--space-md:1.5rem;--space-lg:2rem;--space-xl:3rem;--space-2xl:4rem;--radius-sm:0.5rem;--radius-md:1rem;--radius-lg:1.5rem;--radius-xl:2rem;--transition-fast:0.2s ease;--transition-normal:0.3s ease;--transition-slow:0.5s ease}html{scroll-behavior:smooth}body{font-family:var(--font-primary);line-height:1.6;color:white;overflow-x:hidden;background:#0f0f23}.background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;overflow:hidden}.bg-gradient{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient( 135deg,#667eea 0%,#764ba2 25%,#f093fb 50%,#f5576c 75%,#4facfe 100% );opacity:0.8;animation:gradientShift 20s ease infinite}.floating-shapes{position:absolute;width:100%;height:100%}.shape{position:absolute;background:rgba(255,255,255,0.1);border-radius:50%;backdrop-filter:var(--glass-blur);animation:float 6s ease-in-out infinite}.shape-1{width:200px;height:200px;top:10%;left:10%;animation-delay:0s}.shape-2{width:150px;height:150px;top:60%;right:10%;animation-delay:2s}.shape-3{width:100px;height:100px;bottom:20%;left:20%;animation-delay:4s}.shape-4{width:120px;height:120px;top:30%;right:30%;animation-delay:1s}.glass-element{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow)}.glass-nav{position:fixed;top:0;width:100%;z-index:1000;padding:var(--space-sm) 0;background:rgba(255,255,255,0.05);backdrop-filter:var(--glass-blur);border-bottom:1px solid var(--glass-border)}.nav-container{max-width:1200px;margin:0 auto;padding:0 var(--space-lg);display:flex;justify-content:space-between;align-items:center}.logo-text{font-size:1.5rem;font-weight:var(--font-weight-bold);background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.hero-section{min-height:100vh;display:flex;align-items:center;padding:var(--space-2xl) 0}.hero-container{max-width:1200px;margin:0 auto;padding:0 var(--space-lg);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2xl);align-items:center}.hero-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:var(--font-weight-bold);line-height:1.1;margin-bottom:var(--space-md)}.title-line{display:block;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.hero-visual{position:relative;display:flex;flex-direction:column;gap:var(--space-lg)}.showcase-section,.about-section{padding:var(--space-2xl) 0}.showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:var(--space-xl)}.demo-cards .demo-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-md);padding:var(--space-lg);margin-top:var(--space-md)}.glass-form{margin-top:var(--space-md)}.demo-progress{margin-top:var(--space-md)}.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-md);margin-top:var(--space-md)}.demo-controls{margin-top:var(--space-md)}.about-content{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2xl);align-items:center}.about-visual{display:flex;justify-content:center;align-items:center}.glass-footer{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border-top:1px solid var(--glass-border);padding:var(--space-2xl) 0 var(--space-lg);margin-top:var(--space-2xl)}@media (max-width:768px){.nav-links{display:none}.hero-container{grid-template-columns:1fr;text-align:center;gap:var(--space-lg)}.hero-section{padding:var(--space-xl) 0}.hero-title{font-size:2.5rem}@media (prefers-reduced-motion:no-preference){.showcase-item{animation:fadeInUp 0.6s ease forwards}@media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}button:focus,input:focus,textarea:focus,a:focus{outline:2px solid var(--primary-color);outline-offset:2px}.text-center{text-align:center}</style>
+    <link rel="preload" href="./assets/css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="./assets/css/styles.css"></noscript>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background">
+        <div class="bg-gradient"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-text">Codex Vibe</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#showcase" class="nav-link">Showcase</a></li>
+                <li><a href="#components" class="nav-link">Components</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            <button class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-line">Modern Glass</span>
+                    <span class="title-line">UI Showcase</span>
+                </h1>
+                <p class="hero-description">
+                    Experience the future of web design with sophisticated glassmorphism effects, 
+                    seamless animations, and cutting-edge UI components built for Cloudflare Workers.
+                </p>
+                <div class="hero-buttons">
+                    <button class="glass-button primary">Explore Components</button>
+                    <button class="glass-button secondary">View Code</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="glass-card floating">
+                    <div class="card-content">
+                        <div class="card-icon">✨</div>
+                        <h3>Glassmorphism</h3>
+                        <p>Transparent beauty</p>
+                    </div>
+                </div>
+                <div class="glass-card floating delay-1">
+                    <div class="card-content">
+                        <div class="card-icon">🚀</div>
+                        <h3>Performance</h3>
+                        <p>Lightning fast</p>
+                    </div>
+                </div>
+                <div class="glass-card floating delay-2">
+                    <div class="card-content">
+                        <div class="card-icon">🎨</div>
+                        <h3>Design</h3>
+                        <p>Pixel perfect</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section id="showcase" class="showcase-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">UI Components Showcase</h2>
+                <p class="section-description">Discover our collection of modern glass UI elements</p>
+            </div>
+            
+            <div class="showcase-grid">
+                <!-- Glass Cards -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Glass Cards</h3>
+                        <div class="demo-cards">
+                            <div class="demo-card">
+                                <div class="card-header">
+                                    <div class="card-avatar"></div>
+                                    <div class="card-info">
+                                        <h4>John Doe</h4>
+                                        <p>UI Designer</p>
+                                    </div>
+                                </div>
+                                <p>Beautiful glass card with blur effects and transparency.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glass Buttons -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Interactive Buttons</h3>
+                        <div class="demo-buttons">
+                            <button class="glass-btn primary">Primary</button>
+                            <button class="glass-btn secondary">Secondary</button>
+                            <button class="glass-btn outline">Outline</button>
+                            <button class="glass-btn danger">Danger</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glass Forms -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Glass Forms</h3>
+                        <form class="glass-form">
+                            <div class="form-group">
+                                <input type="text" placeholder="Enter your name" class="glass-input">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Enter your email" class="glass-input">
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="Your message" class="glass-textarea"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Glass Progress -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Progress Indicators</h3>
+                        <div class="demo-progress">
+                            <div class="progress-item">
+                                <label>HTML/CSS</label>
+                                <div class="glass-progress">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <label>JavaScript</label>
+                                <div class="glass-progress">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <label>Design</label>
+                                <div class="glass-progress">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glass Stats -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">150+</div>
+                                <div class="stat-label">Components</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50k+</div>
+                                <div class="stat-label">Downloads</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">99%</div>
+                                <div class="stat-label">Satisfaction</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glass Toggle -->
+                <div class="showcase-item">
+                    <div class="glass-panel">
+                        <h3>Interactive Controls</h3>
+                        <div class="demo-controls">
+                            <div class="control-item">
+                                <label>Dark Mode</label>
+                                <div class="glass-toggle">
+                                    <input type="checkbox" id="darkMode">
+                                    <label for="darkMode" class="toggle-slider"></label>
+                                </div>
+                            </div>
+                            <div class="control-item">
+                                <label>Notifications</label>
+                                <div class="glass-toggle">
+                                    <input type="checkbox" id="notifications" checked>
+                                    <label for="notifications" class="toggle-slider"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="section-container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Built for Cloudflare Workers</h2>
+                    <p>
+                        This showcase demonstrates modern web design principles with glassmorphism effects,
+                        optimized for deployment on Cloudflare Workers. Every component is crafted with
+                        performance and aesthetics in mind.
+                    </p>
+                    <div class="features-list">
+                        <div class="feature">
+                            <span class="feature-icon">⚡</span>
+                            <span>Lightning fast performance</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">📱</span>
+                            <span>Fully responsive design</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🎨</span>
+                            <span>Modern glassmorphism effects</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🔧</span>
+                            <span>Cloudflare Workers ready</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="glass-sphere">
+                        <div class="sphere-content">
+                            <div class="sphere-text">Codex Vibe</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Codex Vibe</h4>
+                    <p>Modern glass UI components for the web</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#showcase">Showcase</a></li>
+                        <li><a href="#components">Components</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>hello@codexvibe.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Codex Vibe. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <link rel="preload" href="./assets/js/script.js" as="script"><script src="./assets/js/script.js" defer></script>
+</body>
+</html>

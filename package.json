@@ -1,0 +1,24 @@
+{
+  "name": "codex-vibe-showcase",
+  "version": "1.0.0",
+  "description": "A sophisticated modern glass-like frontend UI showcase website for Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler preview"
+  },
+  "keywords": [
+    "glassmorphism",
+    "ui",
+    "showcase",
+    "cloudflare-workers",
+    "modern-web"
+  ],
+  "author": "Codex Vibe",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
