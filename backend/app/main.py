@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
 from app.models import *  # noqa: F401, F403 - Import all models for table creation
-from app.routers import auth, accounts, categories, transactions, budgets, recurring, reports, import_csv
+from app.routers import auth, accounts, categories, transactions, budgets, recurring, reports, import_csv, ai_insights
 
 
 @asynccontextmanager
@@ -36,6 +36,7 @@ app.include_router(budgets.router)
 app.include_router(recurring.router)
 app.include_router(reports.router)
 app.include_router(import_csv.router)
+app.include_router(ai_insights.router)
 
 
 @app.get("/api/health")

@@ -8,6 +8,7 @@ import Accounts from './pages/Accounts';
 import Transactions from './pages/Transactions';
 import Budgets from './pages/Budgets';
 import Reports from './pages/Reports';
+import AIInsights from './pages/AIInsights';
 import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export default function App() {
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/budgets" element={<Budgets />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/ai" element={<AIInsights />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>
             </Layout>

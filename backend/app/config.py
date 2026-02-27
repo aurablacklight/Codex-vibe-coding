@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALGORITHM: str = "HS256"
 
+    # Ollama / OpenAI-compatible local LLM
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "llama3.2"
+    AI_ENABLED: bool = True
+    AI_REQUEST_TIMEOUT: int = 120
+
     class Config:
         env_file = ".env"
 
