@@ -1,0 +1,109 @@
+name: Deploy to Home Lab
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  DEPLOY_HOST: sandbox.tail6a8276.ts.net
+  DEPLOY_USER: deploy
+  DEPLOY_PATH: /opt/budgetbolt
+
+jobs:
+  deploy:
+    name: Deploy BudgetBolt
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy via Tailscale SSH
+        run: |
+          # Wait for tailscale to be fully connected
+          tailscale status
+
+          # Sync the repo to the server
+          ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'DEPLOY_SCRIPT'
+            set -euo pipefail
+
+            DEPLOY_PATH="${{ env.DEPLOY_PATH }}"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+            BRANCH="${{ github.ref_name }}"
+
+            echo "==> Deploying BudgetBolt ($BRANCH) to $DEPLOY_PATH"
+
+            # First-time setup: clone the repo
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "==> First deploy — cloning repo"
+              sudo mkdir -p "$DEPLOY_PATH"
+              sudo chown $(whoami):$(whoami) "$DEPLOY_PATH"
+              git clone "$REPO_URL" "$DEPLOY_PATH"
+              cd "$DEPLOY_PATH"
+              git checkout "$BRANCH"
+            else
+              echo "==> Pulling latest changes"
+              cd "$DEPLOY_PATH"
+              git fetch origin "$BRANCH"
+              git reset --hard "origin/$BRANCH"
+            fi
+
+            # Create .env if it doesn't exist (first deploy)
+            if [ ! -f "$DEPLOY_PATH/.env" ]; then
+              echo "==> Creating .env from template"
+              SECRET=$(openssl rand -hex 32)
+              cat > "$DEPLOY_PATH/.env" << EOF
+          SECRET_KEY=$SECRET
+          DATABASE_URL=sqlite:///./data/budgetbolt.db
+          ACCESS_TOKEN_EXPIRE_MINUTES=1440
+          OLLAMA_BASE_URL=http://host.gateway.docker.internal:11434
+          OLLAMA_MODEL=llama3.2
+          AI_ENABLED=true
+          PORT=5000
+          EOF
+            fi
+
+            # Create data directory for SQLite persistence
+            mkdir -p "$DEPLOY_PATH/data"
+
+            # Build and deploy with docker compose
+            echo "==> Building and starting containers"
+            cd "$DEPLOY_PATH"
+            docker compose down --timeout 30 || true
+            docker compose up -d --build --force-recreate
+
+            # Wait for health check
+            echo "==> Waiting for health check..."
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:${PORT:-5000}/api/health > /dev/null 2>&1; then
+                echo "==> BudgetBolt is healthy!"
+                break
+              fi
+              if [ "$i" -eq 30 ]; then
+                echo "==> Health check failed after 30 attempts"
+                docker compose logs --tail 50
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Cleanup old Docker images
+            echo "==> Cleaning up old images"
+            docker image prune -f
+
+            echo "==> Deploy complete!"
+          DEPLOY_SCRIPT
+
+      - name: Verify deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "curl -sf http://localhost:5000/api/health && echo ' — BudgetBolt is live!'"
