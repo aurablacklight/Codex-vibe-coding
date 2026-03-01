@@ -1,0 +1,135 @@
+name: Deploy BudgetBolt V2
+
+on:
+  push:
+    branches: [rewrite/convex-tanstack]
+    paths:
+      - "v2/**"
+      - ".github/workflows/deploy-v2.yml"
+  workflow_dispatch:
+
+env:
+  DEPLOY_HOST: sandbox.tail6a8276.ts.net
+  DEPLOY_USER: debian
+  DEPLOY_PATH: /opt/budgetbolt-v2
+
+jobs:
+  deploy:
+    name: Deploy BudgetBolt V2
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TS_AUTHKEY }}
+
+      - name: Verify Tailscale connection
+        run: |
+          tailscale status
+          tailscale ip -4
+
+      - name: Deploy via Tailscale SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'DEPLOY_SCRIPT'
+            set -euo pipefail
+
+            DEPLOY_PATH="${{ env.DEPLOY_PATH }}"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+            BRANCH="${{ github.ref_name }}"
+
+            echo "==> Deploying BudgetBolt V2 ($BRANCH) to $DEPLOY_PATH"
+
+            # First-time setup: clone the repo
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "==> First deploy — cloning repo"
+              sudo mkdir -p "$DEPLOY_PATH"
+              sudo chown $(whoami):$(whoami) "$DEPLOY_PATH"
+              git clone "$REPO_URL" "$DEPLOY_PATH"
+              cd "$DEPLOY_PATH"
+              git checkout "$BRANCH"
+            else
+              echo "==> Pulling latest changes"
+              cd "$DEPLOY_PATH"
+              git fetch origin "$BRANCH"
+              git reset --hard "origin/$BRANCH"
+            fi
+
+            cd "$DEPLOY_PATH/v2"
+
+            # Create .env.local if it doesn't exist (first deploy)
+            if [ ! -f ".env.local" ]; then
+              echo "==> Creating .env.local"
+              cat > .env.local << EOF
+          VITE_CONVEX_URL=http://localhost:3210
+          CONVEX_SELF_HOSTED_URL=http://localhost:3210
+          EOF
+            fi
+
+            # Build and deploy with docker compose
+            echo "==> Building and starting containers"
+            docker compose down --timeout 30 || true
+            docker compose up -d --build --force-recreate
+
+            # Wait for Convex health
+            echo "==> Waiting for Convex backend..."
+            for i in $(seq 1 30); do
+              if curl -sf http://localhost:3210/version > /dev/null 2>&1; then
+                echo "==> Convex backend is healthy!"
+                break
+              fi
+              if [ "$i" -eq 30 ]; then
+                echo "==> Convex health check failed"
+                docker compose logs --tail 50
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Generate admin key if needed and push functions
+            if ! grep -q "CONVEX_SELF_HOSTED_ADMIN_KEY" .env.local; then
+              echo "==> Generating Convex admin key"
+              ADMIN_KEY=$(docker compose exec -T convex ./generate_admin_key.sh | grep "convex-self-hosted" | tr -d '\r')
+              echo "CONVEX_SELF_HOSTED_ADMIN_KEY=$ADMIN_KEY" >> .env.local
+            fi
+
+            # Push Convex functions
+            echo "==> Pushing Convex functions"
+            source .env.local
+            npx convex deploy --cmd 'echo pushed' 2>&1 || echo "==> Convex push may need manual intervention"
+
+            # Wait for frontend
+            echo "==> Waiting for frontend..."
+            for i in $(seq 1 15); do
+              if curl -sf http://localhost:5100 > /dev/null 2>&1; then
+                echo "==> BudgetBolt V2 is live on port 5100!"
+                break
+              fi
+              if [ "$i" -eq 15 ]; then
+                echo "==> Frontend health check failed"
+                docker compose logs --tail 30
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Cleanup
+            echo "==> Cleaning up old images"
+            docker image prune -f
+
+            echo "==> Deploy complete!"
+          DEPLOY_SCRIPT
+
+      - name: Verify deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "curl -sf http://localhost:5100 > /dev/null && echo 'BudgetBolt V2 is live!'"
+
+      - name: Disconnect from Tailscale
+        if: always()
+        run: |
+          sudo tailscale logout || true
