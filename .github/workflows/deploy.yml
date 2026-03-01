@@ -20,6 +20,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run tests
+        working-directory: backend
+        run: |
+          pip install -q -r requirements-test.txt
+          pytest --tb=short -q
+
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
         with:
