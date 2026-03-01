@@ -45,7 +45,7 @@ def health():
 
 
 # Serve static frontend in production
-static_dir = Path(__file__).parent.parent.parent / "static"
+static_dir = Path(__file__).parent.parent / "static"
 if static_dir.exists():
     app.mount("/assets", StaticFiles(directory=static_dir / "assets"), name="static-assets")
 
