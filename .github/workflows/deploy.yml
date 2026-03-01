@@ -20,8 +20,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Validate Tailscale secrets
+        run: |
+          if [ -z "$TS_ID" ] || [ -z "$TS_SEC" ]; then
+            echo "::error::Tailscale OAuth secrets are empty. Ensure TS_CLIENTID and TS_SECRET are set as REPOSITORY secrets (not Environment secrets)."
+            echo "Go to: Settings > Secrets and variables > Actions > Repository secrets"
+            exit 1
+          fi
+          echo "Tailscale OAuth secrets are present."
+        env:
+          TS_ID: ${{ secrets.TS_CLIENTID }}
+          TS_SEC: ${{ secrets.TS_SECRET }}
+
       - name: Connect to Tailscale
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v4
         with:
           oauth-client-id: ${{ secrets.TS_CLIENTID }}
           oauth-secret: ${{ secrets.TS_SECRET }}
