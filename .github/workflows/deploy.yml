@@ -32,9 +32,6 @@ jobs:
           echo ""
           echo "==> This runner's Tailscale IP:"
           tailscale ip -4
-          echo ""
-          echo "==> Testing connectivity to ${{ env.DEPLOY_HOST }}..."
-          tailscale ping --c 3 ${{ env.DEPLOY_HOST }}
 
       - name: Deploy via Tailscale SSH
         run: |
