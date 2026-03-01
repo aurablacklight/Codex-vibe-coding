@@ -7,7 +7,7 @@ on:
 
 env:
   DEPLOY_HOST: sandbox.tail6a8276.ts.net
-  DEPLOY_USER: deploy
+  DEPLOY_USER: debian
   DEPLOY_PATH: /opt/budgetbolt
 
 jobs:
