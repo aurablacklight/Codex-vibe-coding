@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func, extract
+from sqlalchemy import func, extract, case
 from typing import Optional
 from datetime import date, timedelta
 from app.database import get_db
@@ -60,8 +60,8 @@ def income_vs_expense(
 
     rows = db.query(
         func.strftime("%Y-%m", Transaction.date).label("month"),
-        func.sum(func.case((Transaction.amount > 0, Transaction.amount), else_=0)).label("income"),
-        func.sum(func.case((Transaction.amount < 0, Transaction.amount), else_=0)).label("expense"),
+        func.sum(case((Transaction.amount > 0, Transaction.amount), else_=0)).label("income"),
+        func.sum(case((Transaction.amount < 0, Transaction.amount), else_=0)).label("expense"),
     ).filter(
         Transaction.user_id == current_user.id,
         Transaction.date >= start,

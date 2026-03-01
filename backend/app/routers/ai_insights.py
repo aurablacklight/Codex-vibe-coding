@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import case as sa_case
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -65,8 +66,8 @@ def _gather_financial_context(db: Session, user_id: int, months: int = 3) -> dic
     # Monthly income vs expense
     monthly_rows = db.query(
         func.strftime("%Y-%m", Transaction.date).label("month"),
-        func.sum(func.case((Transaction.amount > 0, Transaction.amount), else_=0)).label("income"),
-        func.sum(func.case((Transaction.amount < 0, Transaction.amount), else_=0)).label("expense"),
+        func.sum(sa_case((Transaction.amount > 0, Transaction.amount), else_=0)).label("income"),
+        func.sum(sa_case((Transaction.amount < 0, Transaction.amount), else_=0)).label("expense"),
     ).filter(
         Transaction.user_id == user_id,
         Transaction.date >= start,
