@@ -26,13 +26,23 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
+          # Ephemeral node — auto-registers on connect, auto-deregisters
+          # when the runner shuts down. No stale nodes left in your tailnet.
+          ephemeral: true
+
+      - name: Verify Tailscale connection
+        run: |
+          echo "==> Tailscale status:"
+          tailscale status
+          echo ""
+          echo "==> This runner's Tailscale IP:"
+          tailscale ip -4
+          echo ""
+          echo "==> Testing connectivity to ${{ env.DEPLOY_HOST }}..."
+          tailscale ping --c 3 ${{ env.DEPLOY_HOST }}
 
       - name: Deploy via Tailscale SSH
         run: |
-          # Wait for tailscale to be fully connected
-          tailscale status
-
-          # Sync the repo to the server
           ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'DEPLOY_SCRIPT'
             set -euo pipefail
 
@@ -107,3 +117,10 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
             "curl -sf http://localhost:5000/api/health && echo ' — BudgetBolt is live!'"
+
+      - name: Disconnect from Tailscale
+        if: always()
+        run: |
+          echo "==> Disconnecting from tailnet (ephemeral node will be deregistered)"
+          sudo tailscale logout || true
+          echo "==> Tailscale node cleaned up"
