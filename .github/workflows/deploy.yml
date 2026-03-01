@@ -26,9 +26,6 @@ jobs:
           oauth-client-id: ${{ secrets.TS_CLIENTID }}
           oauth-secret: ${{ secrets.TS_SECRET }}
           tags: tag:ci
-          # Ephemeral node — auto-registers on connect, auto-deregisters
-          # when the runner shuts down. No stale nodes left in your tailnet.
-          ephemeral: true
 
       - name: Verify Tailscale connection
         run: |
