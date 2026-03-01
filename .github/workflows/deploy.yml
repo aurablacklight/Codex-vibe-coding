@@ -24,7 +24,6 @@ jobs:
         uses: tailscale/github-action@v3
         with:
           authkey: ${{ secrets.TS_AUTHKEY }}
-          args: --ephemeral
 
       - name: Verify Tailscale connection
         run: |
