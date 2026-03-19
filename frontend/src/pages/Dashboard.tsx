@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/client';
 import { Account, Transaction, SpendingByCategory, IncomeVsExpense, Budget } from '../types';
-import SummaryCards from './dashboard/SummaryCards';
-import SpendingPieChart from './dashboard/SpendingPieChart';
-import IncomeExpenseChart from './dashboard/IncomeExpenseChart';
-import BudgetProgress from './dashboard/BudgetProgress';
-import AccountList from './dashboard/AccountList';
-import RecentTransactions from './dashboard/RecentTransactions';
+import SummaryCards from '../components/dashboard/SummaryCards';
+import SpendingPieChart from '../components/dashboard/SpendingPieChart';
+import IncomeExpenseChart from '../components/dashboard/IncomeExpenseChart';
+import BudgetProgress from '../components/dashboard/BudgetProgress';
+import AccountList from '../components/dashboard/AccountList';
+import RecentTransactions from '../components/dashboard/RecentTransactions';
 
 function LoadingSpinner() {
   return (
