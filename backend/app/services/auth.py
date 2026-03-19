@@ -4,7 +4,8 @@ import hmac
 import secrets
 import base64
 import json
-from fastapi import Depends, HTTPException, status
+from typing import Optional
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from app.config import settings
@@ -88,7 +89,8 @@ def _decode_jwt(token: str) -> dict:
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    token: Optional[str] = Depends(oauth2_scheme),
+    access_token_cookie: Optional[str] = Cookie(None),
     db: Session = Depends(get_db),
 ) -> User:
     credentials_exception = HTTPException(
@@ -96,6 +98,11 @@ def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    # Use token from cookie if not provided via Authorization header
+    if token is None:
+        token = access_token_cookie
+    if token is None:
+        raise credentials_exception
     try:
         payload = _decode_jwt(token)
         user_id = payload.get("sub")
